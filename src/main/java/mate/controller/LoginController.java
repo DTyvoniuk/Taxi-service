@@ -10,8 +10,11 @@ import mate.exception.AuthenticationException;
 import mate.lib.Injector;
 import mate.model.Driver;
 import mate.service.AuthenticationService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class LoginController extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger(LoginController.class);
     private static String ATTRIBUTE = "driver_id";
     private static Injector injector = Injector.getInstance("mate");
     private AuthenticationService authenticationService =
@@ -33,7 +36,9 @@ public class LoginController extends HttpServlet {
             HttpSession session = req.getSession();
             session.setAttribute(ATTRIBUTE, driver.getId());
             resp.sendRedirect("/");
+            logger.debug("Driver " + login + " was logged to account");
         } catch (AuthenticationException e) {
+            logger.debug("Driver " + login + " can't login to account");
             req.setAttribute("errorMsg", e.getMessage());
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
         }
